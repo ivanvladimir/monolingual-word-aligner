@@ -883,11 +883,11 @@ def alignNamedEntities(source, target, sourceParseResult, targetParseResult, exi
 
     for item in sourceNamedEntities:
         for jtem in item[1]:
-            if item[3] in ['PERSON', 'ORGANIZATION', 'LOCATION']:
+            if item[3] in ['PERSON','ORGANIZATION','LOCATION','LUG','PERS','ORG']:
                 sourceWords.append(source[jtem-1][2])
     for item in targetNamedEntities:
         for jtem in item[1]:
-            if item[3] in ['PERSON', 'ORGANIZATION', 'LOCATION']:
+            if item[3] in ['PERSON', 'ORGANIZATION', 'LOCATION','LUG','PERS','ORG']:
                 targetWords.append(target[jtem-1][2])
 
 
@@ -904,7 +904,7 @@ def alignNamedEntities(source, target, sourceParseResult, targetParseResult, exi
 
     # align all full matches
     for item in sourceNamedEntities:
-        if item[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION']:
+        if item[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION','LUG','PERS','ORG']:
             continue
 
         
@@ -918,7 +918,7 @@ def alignNamedEntities(source, target, sourceParseResult, targetParseResult, exi
 
 
         for jtem in targetNamedEntities:
-            if jtem[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION']:
+            if jtem[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION','LUG','PERS','ORG']:
                 continue
 
             # do not align if the current target entity is present more than once
@@ -945,10 +945,10 @@ def alignNamedEntities(source, target, sourceParseResult, targetParseResult, exi
 
     # align acronyms with their elaborations
     for item in sourceNamedEntities:
-        if item[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION']:
+        if item[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION','LUG','PERS','ORG']:
             continue
         for jtem in targetNamedEntities:
-            if jtem[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION']:
+            if jtem[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION','LUG','PERS','ORG']:
                 continue
 
             if len(item[2])==1 and isAcronym(item[2][0], jtem[2]):
@@ -968,7 +968,7 @@ def alignNamedEntities(source, target, sourceParseResult, targetParseResult, exi
                                
     # align subset matches
     for item in sourceNamedEntities:
-        if item[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION'] or item in sourceNamedEntitiesAlreadyAligned:
+        if item[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION','LUG','PERS','ORG'] or item in sourceNamedEntitiesAlreadyAligned:
             continue
 
         # do not align if the current source entity is present more than once
@@ -981,7 +981,7 @@ def alignNamedEntities(source, target, sourceParseResult, targetParseResult, exi
 
 
         for jtem in targetNamedEntities:
-            if jtem[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION'] or jtem in targetNamedEntitiesAlreadyAligned:
+            if jtem[3] not in ['PERSON', 'ORGANIZATION', 'LOCATION','LUG','PERS','ORG'] or jtem in targetNamedEntitiesAlreadyAligned:
                 continue
 
             if item[3] <> jtem[3]:
@@ -1531,7 +1531,11 @@ def alignWords(source, target, sourceParseResult, targetParseResult):
 
 
 ##############################################################################################################################
-def align(sentence1, sentence2):
+def align(sentence1, sentence2,lang="english"):
+    if lang=="english":
+        loadPPDB()
+    else:
+        loadPPDB('Resources/ppdb-1.0-xxxl-lexical.extended.synonyms.uniquepairs.spanish')
 
     if isinstance(sentence1, list):
         sentence1 = ' '.join(sentence1)
@@ -1543,9 +1547,14 @@ def align(sentence1, sentence2):
 
     sentence1Lemmatized = lemmatize(sentence1ParseResult)
     sentence2Lemmatized = lemmatize(sentence2ParseResult)
+    
+    if lang=='spanish':
+        sentence1PosTagged = posTagEs(sentence1ParseResult)
+        sentence2PosTagged = posTagEs(sentence2ParseResult)
+    else:
+        sentence1PosTagged = posTagEs(sentence1ParseResult)
+        sentence2PosTagged = posTagEs(sentence2ParseResult)
 
-    sentence1PosTagged = posTag(sentence1ParseResult)
-    sentence2PosTagged = posTag(sentence2ParseResult)
 
     sentence1LemmasAndPosTags = []
     for i in xrange(len(sentence1Lemmatized)):

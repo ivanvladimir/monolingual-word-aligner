@@ -29,6 +29,18 @@ def compareweb(sntc1,sntc2):
 
     return str(sim) 
 
+@app.route("/es/compare/<string:sntc1>/<string:sntc2>")                                         
+def comparewebes(sntc1,sntc2):
+    sntc1=sntc1.replace('+',' ')
+    sntc2=sntc2.replace('+',' ')
+    res=align(sntc1,sntc2,lang='spanish')
+    prop_1=prop_al(res)    
+    res=align(sntc2,sntc1)
+    prop_2=prop_al(res)    
+    sim=2*prop_1*prop_1/(prop_1+prop_2)
+
+    return str(sim) 
+
 
 @app.route("/align/en/<string:sntc1>/<string:sntc2>")                                         
 def alignweb(sntc1,sntc2):

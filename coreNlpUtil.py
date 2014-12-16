@@ -145,6 +145,20 @@ def posTag(parseResult):
 
 
     return res
+
+def posTagEs(parseResult):
+
+    res = []
+
+    wordIndex = 1
+    for i in xrange(len(parseResult['sentences'][0]['words'])):
+        tag = [[parseResult['sentences'][0]['words'][i][1]['CharacterOffsetBegin'], parseResult['sentences'][0]['words'][i][1]['CharacterOffsetEnd']], wordIndex, parseResult['sentences'][0]['words'][i][0], parseResult['sentences'][0]['words'][i][1]['PartOfSpeech'][:2]]
+        wordIndex += 1
+        res.append(tag)
+
+
+    return res
+
 ##############################################################################################################################
 
 
@@ -155,9 +169,14 @@ def lemmatize(parseResult):
 
     res = []
 
+    
     wordIndex = 1
     for i in xrange(len(parseResult['sentences'][0]['words'])):
-        tag = [[parseResult['sentences'][0]['words'][i][1]['CharacterOffsetBegin'], parseResult['sentences'][0]['words'][i][1]['CharacterOffsetEnd']], wordIndex, parseResult['sentences'][0]['words'][i][0], parseResult['sentences'][0]['words'][i][1]['Lemma']]
+        try:
+            tag = [[parseResult['sentences'][0]['words'][i][1]['CharacterOffsetBegin'], parseResult['sentences'][0]['words'][i][1]['CharacterOffsetEnd']], wordIndex, parseResult['sentences'][0]['words'][i][0], parseResult['sentences'][0]['words'][i][1]['Lemma']]
+        except KeyError:
+            tag = [[parseResult['sentences'][0]['words'][i][1]['CharacterOffsetBegin'], parseResult['sentences'][0]['words'][i][1]['CharacterOffsetEnd']], wordIndex, parseResult['sentences'][0]['words'][i][0], stemmeres.stem(parseResult['sentences'][0]['words'][i][0])]
+            
         wordIndex += 1
         res.append(tag)
 
